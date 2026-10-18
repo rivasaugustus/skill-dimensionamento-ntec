@@ -18,6 +18,7 @@ skill-dimensionamento-ntec/
     ├── SKILL.md                    ← orquestrador: procedimento, guardrails, entregável e resposta no chat
     ├── proposta-tecnica.md         ← como preencher as 14 seções da Proposta Técnica (o entregável)
     ├── leitura-prd.md              ← entrada padrão: onde está cada fator na PRD + o que perguntar ao CN
+    ├── fathom.md                   ← busca automática das reuniões do cliente no Fathom (conector)
     ├── insumos-e-perguntas.md      ← caminho sem PRD (formulário, ficha, transcrição) + vocabulário
     ├── regua-dimensionamento.md    ← pesos por fase (F1 a F6), faixa final, calibração, fontes
     ├── regra-fronteira-e-faixa.md  ← desempate entre linhas + tabela de cortes ("O que cortar")
@@ -34,6 +35,7 @@ skill-dimensionamento-ntec/
 
 - **Instalada em:** `~\.claude\skills\dimensionamento-ntec\` (pasta pessoal; vale em qualquer projeto do Claude Code).
 - **Chamar:** `/dimensionamento-ntec`, ou pedir "dimensiona esse projeto" mandando o PDF da PRD (e, se tiver, o bloco "Inventário para dimensionamento"). Sem PRD, aceita o formulário, a ficha ou a transcrição, mas a estimativa sai como preliminar.
+- **Fathom:** a skill busca sozinha as reuniões do cliente (`fathom.md`). No claude.ai, ligar o conector Fathom em *Configurações → Conectores*. No Claude Code, uma vez: `claude mcp add --transport http --scope user fathom https://api.fathom.ai/mcp` e `/mcp` para o login. Sem conector, a skill pede o link ou a transcrição ao CN.
 - **claude.ai:** compactar a pasta `dimensionamento-ntec` em .zip e enviar em *Settings → Capabilities → Skills*.
 - **Rodar a conta direto:**
   ```bash
@@ -65,6 +67,7 @@ Resumo das conversas que criaram e evoluíram a skill (16 e 17/10/2026), para co
 - **Implementado:** o que a PRD não responde é tirado da **transcrição do Fathom**; o que não estiver lá volta ao CN como **lacuna** (`leitura-prd.md`, Passo 4).
 - **Implementado:** a venda mostra com **"+"** quanto depende das lacunas do Fathom: *"vender 14 semanas = 12 + 2 que dependem do Fathom (disponibilidade do cliente, referência de produto)"*. Vende com as lacunas no valor mais pesado (o erro do NTec é vender para menos) e mostra a parte delas em sprints inteiras. Vale também quando há Fathom, mas ele não fala do assunto ("dependem de confirmar com o cliente"). No JSON: `lacunas_fathom` e `fathom`. A página "Régua de Dimensionamento NTec" faz igual.
 - **Removido (17/10/2026):** o buffer de risco percentual (desprezível; provável = soma dos centrais, conservador = soma dos máximos) e a negociação "quando o cliente pede menos prazo". A seção "O que cortar" continua. Só o Projeto B mudou na calibração (11 / 14 / 21).
+- **Implementado (17/10/2026):** busca automática das reuniões do cliente no Fathom pelo conector (`fathom.md`). A skill acha as reuniões pelo radical do nome da empresa (gravações de qualquer CN), confere que são do cliente, lê os resumos de todas e a transcrição de até 3, e lista no chat as reuniões lidas. O CN só cola transcrição ou link se a busca falhar.
 - **Próximo passo:** pendência 2 (avisar o Augustus) ou 3 (resto do levantamento), conforme a lista de pendências.
 - **Como trabalhar com o usuário:** quando faltar informação ou houver decisão a tomar, **perguntar antes de assumir**, com uma opção recomendada.
 
@@ -82,6 +85,7 @@ Resumo das conversas que criaram e evoluíram a skill (16 e 17/10/2026), para co
 | 17/10/2026 | Entregável passa a ser a Proposta Técnica no template do NTec (PDF) |
 | 17/10/2026 | Fator Claude Code (primeiro x0,5, depois o meio-termo x0,75 no núcleo do F3); PDF explicativo v4 |
 | 17/10/2026 | Venda com "+" para as lacunas do Fathom ("14 = 12 + 2 que dependem do Fathom"), igual na skill e na página |
+| 17/10/2026 | Busca automática das reuniões do cliente no Fathom pelo conector (`fathom.md`), sem o CN colar transcrição |
 
 ### O que foi pedido (origem)
 Criar, para o NTec, uma skill parecida com a do NCiv da Gabi Lobo, que leve em conta que somos uma **empresa júnior**, use os dados reais dos projetos e chegue a uma **faixa de semanas**. O uso deve ser **prático para CNs**, que em geral são fracos tecnicamente e mandam para a equipe de projetos prazos sem sentido.
@@ -147,7 +151,7 @@ Todos são **anteriores à PRD**: as regras de leitura da PRD ainda não foram c
 4. **Conseguir a subpágina "Régua de Dimensionamento"** do Notion. Se tiver números, eles valem mais que os da skill.
 5. **Atualizar a calibração** quando o Projeto A (19/10/2026) e os Projetos B e D (23/11/2026) terminarem. Passo a passo em `exemplos/README.md`; atualizar também a ficha original em `privado/`.
 6. **Conferir as regras de leitura da PRD** no primeiro projeto com PRD que terminar (principalmente "rotina agendada → RN específica").
-7. Testar a skill com um CN num lead real.
+7. Testar a skill com um CN num lead real, conferindo se a busca do Fathom acha as reuniões certas.
 8. **Conferir o fator Claude Code** com o realizado do Projeto B (23/11/2026) e do primeiro projeto com login que terminar (o F2 com fator não foi medido).
 
 Feito: PDF v2 com a PRD; publicação no GitHub com projetos anonimizados; integrações com peso fixo e PDF v3; Proposta Técnica como entregável, fator Claude Code e PDF v4.
