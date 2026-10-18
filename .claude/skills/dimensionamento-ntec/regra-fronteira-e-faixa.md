@@ -15,6 +15,8 @@ Diferente do NCiv (onde a direção muda por disciplina), no NTec a direção é
 
 Sempre nesta ordem. Só passa ao passo seguinte se o anterior não resolver.
 
+**Passo 0 — O que o cliente disse.** Procurar no mapa das falas (`leitura-prd.md`, Passo 4) a fala do cliente sobre o ponto em dúvida: "precisa estar na App Store" decide PWA × app; "é o nosso ERP" decide serviço de mercado × sistema do cliente; "o gestor só aprova" decide poucas × grandes diferenças entre perfis; uma referência citada decide atípico × setor incomum. Fala explícita do cliente decide, e o comentário cita a reunião e o minuto. Com PRD, a fala só desempata o que a PRD deixa em dúvida: não muda o escopo.
+
 **Passo 1 — Precedente.** Procurar em `exemplos/` um projeto com o mesmo formato e um número parecido de fluxos e níveis de acesso. Se achar, usar a classificação que ele usou para o fator em dúvida e registrar qual foi.
 
 **Passo 2 — Linha mais pesada.** Sem precedente, escolher a linha de cima da régua. Registrar.
@@ -82,3 +84,5 @@ Ordem de impacto típica:
 | Trocar integração automática por importação manual (planilha) no MVP — é o plano B obrigatório de toda integração com sistema do cliente | 0,5 a 2,5 |
 
 Sempre recalcular com o script depois do corte. Não subtrair de cabeça.
+
+**Prioridade do cliente.** Antes de ordenar os cortes, conferir no mapa das falas o que o cliente chamou de essencial e o que ele disse que pode ficar para depois. Corte de algo essencial vai por último e leva o aviso "o cliente disse que é essencial (data, minuto)"; o que ele aceitou adiar vai primeiro.

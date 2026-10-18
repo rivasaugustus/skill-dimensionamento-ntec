@@ -6,7 +6,7 @@ Modelo completo do JSON: `exemplos/ficticio-petagenda-proposta.json`.
 
 ## Regras do preenchimento
 
-- **Fonte de tudo é a PRD**, mais o Fathom e o CN, como no resto da skill. A proposta não acrescenta módulo, perfil, integração, log ou permissão que a PRD não tem. Se o template pede algo que a PRD não traz, escrever "não previsto no PRD". Se isso muda o prazo, vira ponto em aberto (seção 11).
+- **Fonte de tudo é a PRD**, mais as transcrições do Fathom (pelo mapa das falas, `leitura-prd.md`, Passo 4) e o CN, como no resto da skill. A proposta não acrescenta módulo, perfil, integração, log ou permissão que a PRD não tem. Se o template pede algo que a PRD não traz, escrever "não previsto no PRD". Se isso muda o prazo, vira ponto em aberto (seção 11).
 - **As semanas não são digitadas.** O script recalcula a faixa a partir de `dimensionamento.entrada`, que é o mesmo JSON da régua (`calcular_faixa.py`). Caixa de status, cronograma e anexo saem do mesmo cálculo.
 - **Lacunas do Fathom na caixa de status.** Com `lacunas_fathom` na entrada, a caixa de status mostra a venda com "+" ("14 semanas = 12 + 2 que dependem do Fathom") (`leitura-prd.md`, Passo 4). O cronograma segue a venda com as lacunas.
 - **Nada interno no corpo** (seções 1 a 14): sem `(origem: ...)` nem nome de arquivo da régua. As origens ficam no anexo (critérios, suposições) e no chat.
@@ -43,6 +43,29 @@ Modelo completo do JSON: `exemplos/ficticio-petagenda-proposta.json`.
 | 14. Protótipo **(obrig.)** | `prototipo.recebido`, `prototipo.tabela` (`[tela, regra, adaptação, justificativa, vale p/ MVP]`), `prototipo.declaracao` | Só com protótipo recebido e validado pelo cliente. Sem adaptação: `declaracao` = "O protótipo segue integralmente as regras do PRD". Sem protótipo: `recebido: false`, tabela vazia; o PDF avisa o comercial |
 
 `dependencia_externa_sem_confirmacao`: `true` se alguma integração ou fornecedor está sendo tratado como certo sem confirmação. Com a regra de peso fixo e a cláusula de contrato, o normal é `false`.
+
+## O que vem das transcrições, seção por seção
+
+A PRD decide o escopo; as transcrições dão o resto. Toda seção consulta o mapa das falas (`leitura-prd.md`, Passo 4) antes de ser escrita. O limite é um só: **nada que esteja só na transcrição entra na conta ou vira entrega *Prioritário***. O que foi discutido e não está na PRD vira *A confirmar* (seção 10) ou ponto em aberto (seção 11).
+
+| Seção | O que tirar das transcrições |
+|---|---|
+| Cabeçalho | `responsavel_comercial` = dono do card no Pipedrive, quando houver |
+| 1. Problema | A dor e o impacto com as palavras do cliente: o que dá errado hoje, com que frequência, quanto custa |
+| 2. Visão geral | Quem usa e quantos, como o cliente descreveu; a referência de produto que ele citou |
+| 3. Entidades | O vocabulário do cliente para cada entidade da PRD ("fluxo", "solicitação", "chamado") |
+| 4. Perfis | Quem faz o quê na operação, como o cliente contou; confirma a matriz da PRD |
+| 5. Fluxo | A jornada na ordem em que o cliente contou; `pendente` nas etapas que ele deixou para decidir |
+| 6. Regras | Regras que o cliente explicou (alçada de aprovação, SLA, versionamento). Regra dita e ausente da PRD vai para a seção 11 |
+| 7. Arquitetura | Sistemas atuais que o cliente citou (ERP, BI, sistemas web próprios) e como eles conversam hoje |
+| 8. Segurança | Dados sensíveis, LGPD, acesso público ou privado, quem pode ver o quê, quando o cliente falou disso |
+| 9. Módulos críticos | Integração, automação ou documento que o cliente descreveu como crítico, com o sistema do outro lado |
+| 10. Roadmap | *A confirmar* = discutido nas transcrições e fora da PRD; *Futuro* = Exclusões e o que o cliente disse que pode ficar para depois |
+| 11. Pontos em aberto | Lacunas, divergências entre transcrição e PRD, decisões que o cliente deixou em aberto e reuniões do card sem gravação |
+| 12. Stack | Exigência de tecnologia ou de infra dita pelo cliente; sistemas com que a solução precisa conviver |
+| 13. Cronograma | Data de início, recesso e calendário citados; quem testa e com que frequência. A próxima reunião combinada não é data de início |
+| 14. Protótipo | Se uma transcrição mostra protótipo apresentado, a data e a reação do cliente. O link continua vindo do CN |
+| Anexo | `criterios` citam PRD e transcrição; `precedente` se justifica pelo produto que o cliente descreveu; `cortes` respeitam as prioridades dele; `suposicoes` começa pela lista de transcrições lidas e de reuniões do card sem gravação |
 
 ## Cronograma sprint a sprint (seção 13)
 
