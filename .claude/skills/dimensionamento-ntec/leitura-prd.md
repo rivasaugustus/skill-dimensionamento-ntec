@@ -14,7 +14,7 @@ Este arquivo diz onde, na PRD, está cada fator da régua e como traduzi-lo para
 | **Bloco "Inventário para dimensionamento"** | Chat da skill da PRD, logo depois do PDF | Atalho: uma linha por módulo, com `Módulo \| Superfície \| Itens A(cli)D \| Itens SID \| Integrações \| Fluxos de dados \| Fatores de complexidade`. Se o CN não colar, **montar o inventário a partir do PDF** com as mesmas colunas |
 | **Bloco "Pontos para a imersão"** | Chat da skill da PRD | Detalhes que não mudam o tamanho. Não somam prazo: entram como atividades da imersão (F1) na resposta |
 | Blocos "Perfis de acesso", "Funcionalidades" e "Integrações" | Chat da skill da PRD | Conferência. As fontes (`[Fathom · AT 12/03]`, `[chat]`…) mostram de onde veio cada item |
-| **Reuniões do cliente no Fathom** | **A própria skill busca** pelo conector (`fathom.md`): as mesmas reuniões que geraram a PRD. O CN só cola transcrição ou link (ou resumo do Granola) se a busca não funcionar | Responder o Passo 4 sem perguntar ao CN. O que não estiver nelas vira **lacuna** |
+| **Transcrições das reuniões do cliente no Fathom** | **A própria skill puxa** pelo conector (Passo 4): as mesmas reuniões que geraram a PRD. O CN só cola transcrição ou link se a busca não funcionar | Responder o Passo 4 sem perguntar ao CN. O que não estiver nelas vira **lacuna** |
 
 **Sem PRD** (só o formulário Dimensionamento Tec, uma transcrição ou um briefing): dimensionar mesmo assim pelo caminho de `insumos-e-perguntas.md`, mas o status nunca é ✅. Marcar ⚠️ **Estimativa preliminar, sem PRD** e dizer ao CN para rodar a skill da PRD antes de fechar a proposta.
 
@@ -69,11 +69,24 @@ A PRD marca fatores que não têm linha própria na régua. Eles **encaixam nas 
 
 **Não contar duas vezes.** O mesmo módulo vira RN específica uma vez só, mesmo que tenha concorrência **e** imutabilidade. Um fator que já virou integração não vira também feature atípica (a exceção é a IA que decide sozinha, que só ganha ⚠️, sem peso).
 
-## Passo 4 — O que a PRD não responde: transcrição do Fathom primeiro, lacuna para o CN depois
+## Passo 4 — O que a PRD não responde: transcrições do Fathom primeiro, lacuna para o CN depois
 
-A PRD descreve o produto, não o projeto. Os quatro fatores abaixo ficam de fora dela, mas quase sempre aparecem nas reuniões com o cliente. A skill **busca sozinha as reuniões do cliente no Fathom** (`fathom.md`) e procura cada um nas transcrições antes de perguntar qualquer coisa. O que não estiver lá vira **lacuna** e volta para o CN.
+A PRD descreve o produto, não o projeto. Os quatro fatores abaixo ficam de fora dela, mas quase sempre aparecem nas reuniões com o cliente. A skill **puxa sozinha as transcrições dessas reuniões no Fathom** e procura cada fator nelas antes de perguntar qualquer coisa. O que não estiver lá vira **lacuna** e volta para o CN. Este passo vale também sem PRD (`insumos-e-perguntas.md`, Passo 2).
 
-**Busca sem resultado** (sem conector, erro de login ou nenhuma reunião do cliente): pedir uma vez ao CN o link da reunião ou a transcrição colada (`fathom.md`, Passos 1 e 2). Se ele não tiver, os quatro fatores viram lacuna.
+**A fonte é a transcrição, nunca o resumo do Fathom.** O resumo é escrito para vendas (rapport, dores, próximos passos), reescreve a fala do cliente e descarta justamente o que este passo procura: quem testa, "nossos servidores", "começa em março". A skill não abre o resumo.
+
+**Como puxar as transcrições:**
+
+1. **Conector.** No claude.ai, o conector Fathom; as ferramentas costumam vir diferidas, carregar com `tool_search` ("fathom meetings"). No Claude Code, uma vez por computador: `claude mcp add --transport http --scope user fathom https://api.fathom.ai/mcp` e `/mcp` para o login. Só leitura: a skill nunca altera nada no Fathom.
+2. **Achar as reuniões do cliente**, parando no primeiro caminho que achar:
+   - **O que já está na conversa.** Link do Fathom colado pelo CN → `get_recording_by_url`. Se a PRD foi feita nesta mesma conversa, as transcrições que a skill da PRD já abriu valem: não puxar de novo.
+   - **Pelo título.** `list_meetings` com `max_pages: 20` (~200 reuniões, uns 3 meses no ritmo do time; ciclo mais longo, chamar de novo com o `next_cursor`), sem filtrar por quem gravou, porque a gravação pode estar no nome de um colega. Ficam as reuniões com o **radical** do nome da empresa no título, em qualquer posição, sem acento e sem caixa: "SAUR Equipamentos" → `SAUR` acha `[Aprofundamento] SAUR Equipamentos & Poli Júnior`. Os títulos variam (`GreenYellow - Poli Júnior USP`, `MPD Engenharia + Poli Júnior`, `Poli Júnior USP & Sambaíba`).
+   - **Pelo contato.** Nada no título → `find_person` com o nome do contato do cliente e `recorded_by: "anyone"`.
+   - **Nada achado:** pedir uma vez ao CN o link da reunião ou a transcrição colada (a gravação pode ser de alguém que não a compartilhou com ele). Sem isso, os quatro fatores viram lacuna, com `"fathom": false`.
+3. **Conferir cada reunião.** Só reunião com o cliente entra: convidado com e-mail do domínio da empresa confirma (`list_meetings` traz os convidados). Reunião interna (aula, roleplay, reunião de núcleo) fica fora, mesmo citando a empresa. Dois clientes com o mesmo radical: mostrar título e data ao CN e perguntar qual é. O título não diz a etapa (`[Aprofundamento]` muitas vezes titula a AT Diagnóstica): a etapa sai da transcrição.
+4. **Ler as transcrições.** `get_meeting_transcript` de cada reunião do cliente, passando o `url` da reunião para cada fala vir com o link do minuto. Da **mais recente para a mais antiga**, em rodadas de até 3, porque transcrição é longa. Parar quando os quatro fatores estiverem respondidos: como a leitura começa pela mais recente, a primeira resposta achada já é a que vale.
+
+O nome da empresa vem da PRD (Visão Geral ou título), do chat, da ficha ou do formulário. Se a PRD só traz o nome do produto ("[Requisitos] PetAgenda") e nada diz quem é o cliente, perguntar ao CN em uma linha antes de buscar.
 
 | Fator | O que procurar na transcrição | Como traduzir | Pergunta da lacuna (pronta para o CN repassar) |
 |---|---|---|---|
@@ -85,14 +98,18 @@ A PRD descreve o produto, não o projeto. Os quatro fatores abaixo ficam de fora
 **O que conta como resposta encontrada:**
 - O cliente (ou o CN, na reunião) **disse explicitamente**. Registrar com a reunião e um trecho curto: `(origem: Fathom · 12/03 — "a Ana valida toda sexta")`.
 - Duas reuniões dizem coisas diferentes → vale a mais recente, e a divergência vai para *Pontos de atenção*. Se não der para saber qual vale, é lacuna.
+- **Quem falou importa.** Vale o que o cliente disse, ou o que o time disse e o cliente confirmou na hora. "A gente costuma fazer em React", dito pelo CN, não é exigência de stack do cliente. A transcrição traz o nome de quem fala, mas não o lado, e às vezes troca falas entre pessoas: é do cliente quem tem e-mail do domínio da empresa nos convidados, ou quem só aparece nas reuniões deste cliente (quem aparece em reuniões de várias empresas é do time da Poli Júnior). Na dúvida, não conta.
+- **Divergência com a PRD.** A transcrição mostra algo que muda o tamanho e não está na PRD (ex.: o cliente pediu nota fiscal e a PRD não tem) → não entra na conta, porque a PRD é o anexo de contrato. Vai para *Pontos de atenção*, com a reunião e o trecho.
 - **Não é resposta:** dedução a partir do tom da conversa, silêncio sobre o assunto, ou fala vaga ("vamos ver", "acho que sim"). Tudo isso é lacuna.
 
 **O que fazer com a lacuna:**
 1. Dimensionar mesmo assim com o **valor mais pesado plausível** (`cliente_pouca_disponibilidade: true`, `stack_fora_template: true` só se houver algum indício, `atipico: true` só se nenhuma referência foi citada). Semanas off sem data de início: não somar, e dizer isso no prazo em uma frase.
-2. **Mostrar quanto da venda depende das lacunas.** No JSON da régua, listar os fatores em lacuna em `"lacunas_fathom"` (ex.: `["cliente_pouca_disponibilidade", "atipico"]`) e marcar `"fathom": true` se a busca achou e leu reuniões do cliente (o Fathom existe, mas não fala do assunto). O script refaz a conta com esses fatores no valor leve e diz a diferença em sprints inteiras. O prazo vende o número com as lacunas e mostra a parte delas com "+": *"Recomendado vender 14 semanas (7 sprints) = 12 + 2 que dependem do Fathom (disponibilidade do cliente, referência de produto), mais as semanas off."* Confirmando as lacunas no leve, a venda cai para o primeiro número. Com Fathom que não fala do assunto, a frase diz "dependem de confirmar com o cliente". Se a diferença não muda as sprints, não há "+".
+2. **Mostrar quanto da venda depende das lacunas.** No JSON da régua, listar os fatores em lacuna em `"lacunas_fathom"` (ex.: `["cliente_pouca_disponibilidade", "atipico"]`) e marcar `"fathom": true` se a skill leu transcrições do cliente (o Fathom existe, mas não fala do assunto). O script refaz a conta com esses fatores no valor leve e diz a diferença em sprints inteiras. O prazo vende o número com as lacunas e mostra a parte delas com "+": *"Recomendado vender 14 semanas (7 sprints) = 12 + 2 que dependem do Fathom (disponibilidade do cliente, referência de produto), mais as semanas off."* Confirmando as lacunas no leve, a venda cai para o primeiro número. Com Fathom que não fala do assunto, a frase diz "dependem de confirmar com o cliente". Se a diferença não muda as sprints, não há "+".
 3. Listar na seção **5. Lacunas para o CN** da resposta: o fator, o que foi procurado e não achado, a pergunta pronta e o valor provisório usado na conta.
 4. Registrar o valor provisório em *Suposições*, com `(origem: lacuna — não está no Fathom)`.
 5. **Status:** lacuna em disponibilidade, stack/infra ou atípico mexe na faixa → ⚠️ *Precisa de revisão* até o CN responder. Lacuna só na data de início não muda a faixa: não rebaixa o status.
+
+**Registrar as transcrições lidas:** na resposta ao CN, uma linha *Fathom* com cada reunião lida (data, etapa e link), para ele conferir que a busca pegou o cliente certo, ou o motivo de não ter lido nenhuma. Na proposta, a mesma lista, sem links, é o primeiro item de `suposicoes` no anexo.
 
 Quando o CN responder uma lacuna, trocar o valor provisório, tirar o fator de `lacunas_fathom`, rodar o script de novo e mudar a origem para `(origem: CN)`.
 
