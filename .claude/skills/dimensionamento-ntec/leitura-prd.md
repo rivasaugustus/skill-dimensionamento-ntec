@@ -14,7 +14,7 @@ Este arquivo diz onde, na PRD, está cada fator da régua e como traduzi-lo para
 | **Bloco "Inventário para dimensionamento"** | Chat da skill da PRD, logo depois do PDF | Atalho: uma linha por módulo, com `Módulo \| Superfície \| Itens A(cli)D \| Itens SID \| Integrações \| Fluxos de dados \| Fatores de complexidade`. Se o CN não colar, **montar o inventário a partir do PDF** com as mesmas colunas |
 | **Bloco "Pontos para a imersão"** | Chat da skill da PRD | Detalhes que não mudam o tamanho. Não somam prazo: entram como atividades da imersão (F1) na resposta |
 | Blocos "Perfis de acesso", "Funcionalidades" e "Integrações" | Chat da skill da PRD | Conferência. As fontes (`[Fathom · AT 12/03]`, `[chat]`…) mostram de onde veio cada item |
-| **Transcrições do Fathom** (ou resumo do Fathom/Granola) das reuniões com o cliente | As mesmas reuniões que geraram a PRD | Responder o Passo 4 sem perguntar ao CN. O que não estiver nelas vira **lacuna** |
+| **Reuniões do cliente no Fathom** | **A própria skill busca** pelo conector (`fathom.md`): as mesmas reuniões que geraram a PRD. O CN só cola transcrição ou link (ou resumo do Granola) se a busca não funcionar | Responder o Passo 4 sem perguntar ao CN. O que não estiver nelas vira **lacuna** |
 
 **Sem PRD** (só o formulário Dimensionamento Tec, uma transcrição ou um briefing): dimensionar mesmo assim pelo caminho de `insumos-e-perguntas.md`, mas o status nunca é ✅. Marcar ⚠️ **Estimativa preliminar, sem PRD** e dizer ao CN para rodar a skill da PRD antes de fechar a proposta.
 
@@ -71,9 +71,9 @@ A PRD marca fatores que não têm linha própria na régua. Eles **encaixam nas 
 
 ## Passo 4 — O que a PRD não responde: transcrição do Fathom primeiro, lacuna para o CN depois
 
-A PRD descreve o produto, não o projeto. Os quatro fatores abaixo ficam de fora dela, mas quase sempre aparecem nas reuniões com o cliente. A skill **procura cada um na transcrição do Fathom** antes de perguntar qualquer coisa. O que não estiver lá vira **lacuna** e volta para o CN.
+A PRD descreve o produto, não o projeto. Os quatro fatores abaixo ficam de fora dela, mas quase sempre aparecem nas reuniões com o cliente. A skill **busca sozinha as reuniões do cliente no Fathom** (`fathom.md`) e procura cada um nas transcrições antes de perguntar qualquer coisa. O que não estiver lá vira **lacuna** e volta para o CN.
 
-**Sem transcrição na conversa:** pedir uma vez ao CN para colar a transcrição ou o resumo do Fathom das reuniões com o cliente. Se ele não tiver, os quatro fatores viram lacuna.
+**Busca sem resultado** (sem conector, erro de login ou nenhuma reunião do cliente): pedir uma vez ao CN o link da reunião ou a transcrição colada (`fathom.md`, Passos 1 e 2). Se ele não tiver, os quatro fatores viram lacuna.
 
 | Fator | O que procurar na transcrição | Como traduzir | Pergunta da lacuna (pronta para o CN repassar) |
 |---|---|---|---|
@@ -89,7 +89,7 @@ A PRD descreve o produto, não o projeto. Os quatro fatores abaixo ficam de fora
 
 **O que fazer com a lacuna:**
 1. Dimensionar mesmo assim com o **valor mais pesado plausível** (`cliente_pouca_disponibilidade: true`, `stack_fora_template: true` só se houver algum indício, `atipico: true` só se nenhuma referência foi citada). Semanas off sem data de início: não somar, e dizer isso no prazo em uma frase.
-2. **Mostrar quanto da venda depende das lacunas.** No JSON da régua, listar os fatores em lacuna em `"lacunas_fathom"` (ex.: `["cliente_pouca_disponibilidade", "atipico"]`) e marcar `"fathom": true` se havia transcrição (o Fathom existe, mas não fala do assunto). O script refaz a conta com esses fatores no valor leve e diz a diferença em sprints inteiras. O prazo vende o número com as lacunas e mostra a parte delas com "+": *"Recomendado vender 14 semanas (7 sprints) = 12 + 2 que dependem do Fathom (disponibilidade do cliente, referência de produto), mais as semanas off."* Confirmando as lacunas no leve, a venda cai para o primeiro número. Com Fathom que não fala do assunto, a frase diz "dependem de confirmar com o cliente". Se a diferença não muda as sprints, não há "+".
+2. **Mostrar quanto da venda depende das lacunas.** No JSON da régua, listar os fatores em lacuna em `"lacunas_fathom"` (ex.: `["cliente_pouca_disponibilidade", "atipico"]`) e marcar `"fathom": true` se a busca achou e leu reuniões do cliente (o Fathom existe, mas não fala do assunto). O script refaz a conta com esses fatores no valor leve e diz a diferença em sprints inteiras. O prazo vende o número com as lacunas e mostra a parte delas com "+": *"Recomendado vender 14 semanas (7 sprints) = 12 + 2 que dependem do Fathom (disponibilidade do cliente, referência de produto), mais as semanas off."* Confirmando as lacunas no leve, a venda cai para o primeiro número. Com Fathom que não fala do assunto, a frase diz "dependem de confirmar com o cliente". Se a diferença não muda as sprints, não há "+".
 3. Listar na seção **5. Lacunas para o CN** da resposta: o fator, o que foi procurado e não achado, a pergunta pronta e o valor provisório usado na conta.
 4. Registrar o valor provisório em *Suposições*, com `(origem: lacuna — não está no Fathom)`.
 5. **Status:** lacuna em disponibilidade, stack/infra ou atípico mexe na faixa → ⚠️ *Precisa de revisão* até o CN responder. Lacuna só na data de início não muda a faixa: não rebaixa o status.

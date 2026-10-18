@@ -13,12 +13,12 @@ Este arquivo é o caminho **sem PRD**: o formulário **Dimensionamento Tec** (in
 | **PRD ("[Requisitos] {projeto}")** | Tudo | Não é este arquivo: ir para `leitura-prd.md` |
 | Formulário Dimensionamento Tec | Seções 1 (perfis de usuário), 3 (fluxos críticos, features atípicas), 5 (porte e maturidade do cliente) e 6 (perfil da demanda: formato, níveis, multitenancy, integrações, dados, offline) | Seções 7 e 8 (baseline e buffer) preenchidas pelo CN são **palpite**: não usar como entrada, só comparar no fim |
 | Ficha de qualificação ou proposta | Produto, setor, porte, o que o cliente pediu | Costuma **subestimar o escopo** (Projeto B: o escopo real ficou maior que o da ficha) |
-| Transcrição de call (Fathom, Granola, notas) | Fluxos descritos pelo cliente, integrações citadas, urgência, quem aprova | Filtrar a conversa: só o que mexe em prazo. Desejo vago ("seria legal ter…") não é escopo até o CN confirmar |
+| Transcrição de call (Fathom, Granola, notas). As do Fathom a skill busca sozinha (`fathom.md`) | Fluxos descritos pelo cliente, integrações citadas, urgência, quem aprova | Filtrar a conversa: só o que mexe em prazo. Desejo vago ("seria legal ter…") não é escopo até o CN confirmar |
 | Texto livre do CN | O que tiver | Tudo é `origem: palpite do CN` até ser confirmado |
 
 ## Passo 2 — Preencher os fatores, perguntando o que faltar
 
-**Se veio transcrição do Fathom (ou de outra ferramenta):** procurar a resposta de cada pergunta nela antes de perguntar, com as mesmas regras do Passo 4 de `leitura-prd.md` (só vale o que foi dito explicitamente, citar a reunião e o trecho). O que não estiver lá vira **lacuna** em *Lacunas para o CN*. Disponibilidade do cliente, stack, infra e referência de produto que ficarem como lacuna seguem o Passo 4 de `leitura-prd.md`: valor mais pesado na conta, o fator em `lacunas_fathom` no JSON e o "+" na venda.
+**Antes de perguntar, buscar as reuniões do cliente no Fathom** (`fathom.md`) e usar também qualquer transcrição colada (Granola, notas). Procurar a resposta de cada pergunta nelas antes de perguntar, com as mesmas regras do Passo 4 de `leitura-prd.md` (só vale o que foi dito explicitamente, citar a reunião e o trecho). O que não estiver lá vira **lacuna** em *Lacunas para o CN*. Disponibilidade do cliente, stack, infra e referência de produto que ficarem como lacuna seguem o Passo 4 de `leitura-prd.md`: valor mais pesado na conta, o fator em `lacunas_fathom` no JSON e o "+" na venda.
 
 Perguntar **no máximo 5 por rodada**, primeiro as que mais mexem no prazo (na ordem da tabela). Usar as perguntas como estão: foram escritas para o CN repassar ao cliente sem precisar traduzir.
 
