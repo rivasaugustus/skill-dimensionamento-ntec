@@ -30,7 +30,7 @@ Este caso **não é um projeto real**. É o mesmo PetAgenda de `ficticio-petagen
 
 **Pontos para a imersão:** duração padrão de cada tipo de consulta; campos da carteirinha; texto dos lembretes.
 
-**Transcrições do Fathom** (2 reuniões, coladas pelo CN). O que a PRD não responde foi procurado nelas (`leitura-prd.md`, Passo 4):
+**Reuniões do Fathom** (2 reuniões, de 12/03 e 19/03, achadas pela própria skill no conector, sem o CN colar nada; `fathom.md`). O que a PRD não responde foi procurado nas transcrições (`leitura-prd.md`, Passo 4):
 
 | Fator | Achado no Fathom? | Valor | Origem |
 |---|---|---|---|
